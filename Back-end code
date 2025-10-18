@@ -1,0 +1,51 @@
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+// Sample product data
+const products = [
+  {
+    id: 1,
+    name: 'Wireless Headphones',
+    price: 2499,
+    description: 'Experience high-quality sound with these wireless Bluetooth headphones. With noise cancellation and long battery life, they’re perfect for work, travel, and relaxation.',
+    image: 'https://cdn.shopify.com/s/files/1/0057/8938/4802/files/Rockerz_551_ANC_Pro.347_1.jpg?v=1737546044'
+  }
+];
+
+// Cart array
+let cart = [];
+
+//  GET /products – Fetch product details
+app.get('/products', (req, res) => {
+  res.json({ products });
+});
+
+// POST /cart – Add product to cart
+app.post('/cart', (req, res) => {
+  const { productId } = req.body;
+  const product = products.find(p => p.id === productId);
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  cart.push(product);
+  res.json({ message: 'Product added to cart', cart });
+});
+
+//  GET /cart – View cart contents
+app.get('/cart', (req, res) => {
+  res.json({ cart });
+});
+
+//  DELETE /cart – Clear cart
+app.delete('/cart', (req, res) => {
+  cart = [];
+  res.json({ message: 'Cart cleared' });
+});
+
+//  Start server
+app.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
+});
